@@ -1,0 +1,10 @@
+{
+  "rest-client.environmentVariables": {
+    "local": {
+      "host": "http://127.0.0.1:7001",
+      "username": "carthage",
+      "password": "yet-another-very-secure-password",
+      "userToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNhcnRoYWdlIiwiaWF0IjoxNTA4MzkzMTc3fQ.UR_yu3HbWQ_h2A0Jh3WMkz47D4Asb6nKOLjU7oTiU2Y"
+    }
+  }
+}

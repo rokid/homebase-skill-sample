@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Mimic HTTP Driver</title>
+
+  <script src="/public/socket.io/socket.io.js"></script>
+  <script src="https://unpkg.com/vue"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"></script>
+</head>
+
+<body>
+
+  <style>
+    .on {
+      color: blue;
+    }
+
+    .off {
+      color: grey;
+    }
+
+  </style>
+
+  <div id="app">
+    <div>
+      Devices:
+      <ul>
+        <li v-for="device in devices" :key="device.id">
+          <div>{{ device.deviceId }} : {{ device.name }}, in {{ device.roomName }}
+            <ul>
+              <li v-for="st in Object.keys(device.state)" :key="st">
+                {{st}}: {{device.state[st]}}
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <div class="config-block">
+      Configs:
+      <ul>
+        <li v-for="key in Object.keys(config)" :key="key">
+          {{key}}: {{config[key]}}
+          <input type="checkbox" :id="key"
+            v-model="config[key]"
+            v-if="typeof config[key] === 'boolean'"
+            v-on:change="updateConfig">
+        </li>
+      </ul>
+      <button v-on:click="reset">Reset devices</button>
+      <button v-on:click="resetState">Reset states</button>
+    </div>
+
+    <div class="error" v-show="error">
+      {{ error && error.stack }}
+    </div>
+
+    <div class="message" v-show="message">
+        {{ message }}
+      </div>
+  </div>
+
+  <script>
+    const socket = io()
+    const userToken =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImNhcnRoYWdlIiwiaWF0IjoxNTA4MzkzMTc3fQ.UR_yu3HbWQ_h2A0Jh3WMkz47D4Asb6nKOLjU7oTiU2Y'
+    const app = new Vue({
+      el: '#app',
+      data: {
+        devices: [],
+        config: {},
+        error: null,
+        loaded: false,
+        message: null,
+      },
+      methods: {
+        execute(device, action) {
+          fetch('/driver/execute', {
+            method: 'POST',
+            mode: 'cors',
+            headers: new Headers({
+              'Content-Type': 'application/json'
+            }),
+            body: JSON.stringify({
+              device: Object.assign({}, device, {
+                userAuth: {
+                  userToken
+                }
+              }),
+              action
+            }),
+          })
+        },
+        reset() {
+          fetch('/api/devices/reset', {
+            method: 'PUT',
+            mode: 'cors',
+            headers: new Headers({
+              'Content-Type': 'application/json'
+            }),
+          }).then(async response => {
+              if (response.status !== 200) {
+                throw new Error('reset devices status code error ' + await response.text())
+              }
+              Vue.set(this, 'message', 'Devices reseted')
+            }).catch(err => {
+              Vue.set(this, 'error', err)
+            })
+        },
+        resetState() {
+          fetch('/api/devices/reset-state', {
+            method: 'PUT',
+            mode: 'cors',
+            headers: new Headers({
+              'Content-Type': 'application/json'
+            }),
+          }).then(async response => {
+              if (response.status !== 200) {
+                throw new Error('reset states status code error ' + await response.text())
+              }
+              Vue.set(this, 'message', 'Devices\' state reseted')
+            }).catch(err => {
+              Vue.set(this, 'error', err)
+            })
+        },
+        updateConfig() {
+          if (this.loaded) {
+            fetch('/config', {
+              method: 'PUT',
+              mode: 'cors',
+              headers: new Headers({
+                'Content-Type': 'application/json'
+              }),
+              body: JSON.stringify(this.config),
+            }).then(async response => {
+              if (response.status !== 200) {
+                throw new Error('update config status code error ' + await response.text())
+              }
+
+              Vue.set(this, 'message', 'Config updated')
+            }).catch(err => {
+              Vue.set(this, 'error', err)
+            })
+          }
+        },
+      },
+      created() {
+        fetch('/driver/list', {
+          method: 'POST',
+          mode: 'cors',
+          headers: new Headers({
+            'Content-Type': 'application/json'
+          }),
+          body: JSON.stringify({
+            userAuth: {
+              userToken
+            }
+          })
+        }).then(response => {
+          if (response.status !== 200) {
+            throw new Error('status error')
+          }
+          return response.json()
+        }).then(body => {
+          if (body.status !== 0) {
+            throw new Error('body status error: ' + JSON.stringify(body))
+          }
+          Vue.set(this, 'devices', body.data)
+        }).catch(error => {
+          Vue.set(this, 'error', error)
+        })
+
+        fetch('/config').then(response => {
+          if (response.status !== 200) {
+            throw new Error('status error')
+          }
+          return response.json()
+        }).then(body => {
+          if (body.status !== 0) {
+            throw new Error('body status error: ' + JSON.stringify(body))
+          }
+          Vue.set(this, 'config', body.data)
+          Vue.set(this, 'loaded', true);
+        }).catch(error => {
+          Vue.set(this, 'error', error)
+        })
+      },
+    })
+
+    socket.on('execute', ({ device }) => {
+      const idx = _.findIndex(app.devices, it => it.deviceId === device.deviceId)
+      Vue.set(app.devices, idx, device)
+    })
+
+    socket.on('device:create', ({ device }) => {
+      const devices = [...app.devices, device]
+      Vue.set(app, 'devices', devices)
+    })
+
+    socket.on('device:update', ({ device }) => {
+      const idx = _.findIndex(app.devices, it => it.deviceId === device.deviceId)
+      Vue.set(app.devices, idx, device)
+    })
+
+    socket.on('device:reset', ({ devices }) => {
+      Vue.set(app, 'devices', devices)
+    })
+
+  </script>
+
+</body>
+
+</html>

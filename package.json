@@ -1,43 +1,55 @@
 {
-  "name": "http-driver-sample",
+  "name": "homebase-skill-sample",
   "version": "1.0.0",
   "description": "",
   "private": true,
   "dependencies": {
+    "basic-auth": "^2.0.0",
+    "boom": "^7.1.1",
     "chance": "^1.0.11",
     "egg": "^1.9.0",
     "egg-scripts": "^2.1.0",
+    "egg-socket.io": "^3.0.0",
     "joi": "^13.0.0",
     "jsonwebtoken": "^8.1.0",
-    "lodash": "^4.17.4"
+    "lodash": "^4.17.4",
+    "socket.io-client": "^2.0.4"
   },
   "devDependencies": {
+    "@types/joi": "^13.0.4",
+    "@types/node": "^9.3.0",
     "egg-bin": "^4.3.0",
     "egg-ci": "^1.8.0",
     "egg-mock": "^3.13.0",
-    "eslint": "^4.9.0",
-    "eslint-config-egg": "^5.1.0"
+    "rokid-homebase-cli": "^1.1.4",
+    "standard": "^11.0.1"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.4.0"
   },
   "scripts": {
-    "start": "egg-scripts start",
+    "start": "egg-scripts start -c 1 --sticky",
     "stop": "egg-scripts stop",
-    "dev": "egg-bin dev",
-    "debug": "egg-bin debug",
+    "dev": "egg-bin dev --sticky",
+    "debug": "egg-bin debug --sticky",
     "test": "npm run lint -- --fix && npm run test-local",
     "test-local": "egg-bin test",
     "cov": "egg-bin cov",
-    "lint": "eslint .",
+    "lint": "standard",
     "ci": "npm run lint && npm run cov"
-  },
-  "ci": {
-    "version": "6, 8"
   },
   "repository": {
     "type": "git",
     "url": ""
+  },
+  "standard": {
+    "env": [
+      "mocha"
+    ],
+    "ignore": [
+      "coverage",
+      "app/public/socket.io"
+    ]
   },
   "author": "",
   "license": "UNLISENCED"

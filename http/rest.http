@@ -1,5 +1,5 @@
 ### Get
-POST http://{{host}}/driver/get HTTP/1.1
+POST {{host}}/driver/get HTTP/1.1
 content-type: application/json
 
 {
@@ -12,7 +12,7 @@ content-type: application/json
 }
 
 ### List
-POST http://{{host}}/driver/list HTTP/1.1
+POST {{host}}/driver/list HTTP/1.1
 content-type: application/json
 
 {
@@ -22,12 +22,17 @@ content-type: application/json
 }
 
 ### Execute
-POST http://{{host}}/driver/execute HTTP/1.1
+POST {{host}}/driver/execute HTTP/1.1
 content-type: application/json
 
 {
   "device": {
     "deviceId": "1",
+    "deviceInfo": {
+      "foo": "bar",
+      "from": "sample-driver",
+      "type": "ac"
+    },
     "userAuth": {
       "userToken": "{{userToken}}"
     }
@@ -40,31 +45,33 @@ content-type: application/json
 
 
 ### Command OAuth
-POST http://{{host}}/driver/command HTTP/1.1
+POST {{host}}/driver/command HTTP/1.1
 content-type: application/json
 
 {
   "command": "OAuth",
   "params": {
-    "callbackURL": "http://{{host}}/oauth-callback"
+    "callbackURL": "{{host}}/oauth-callback?driverId=driver-mimic"
   }
 }
 
 ### Command OAuthRefresh
-POST http://{{host}}/driver/command HTTP/1.1
+POST {{host}}/driver/command HTTP/1.1
 content-type: application/json
 
 {
   "command": "OAuthRefresh",
   "params": {
-    "userId": "{{username}}",
-    "userToken": "{{userToken}}"
+    "userId" : "paw-foo",
+    "userToken" : "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImZvbyIsImlhdCI6MTUwOTM2NjYzMCwiZXhwIjoxNTA5MzY3ODMwfQ.7f4sUtogtjsLSP4HmThWtxZXRJ9nuuQmGwlLe-UyUbI",
+    "expiredTime" : "1509360749",
+    "expiresIn" : 1200
   }
 }
 
 
 ### Command Login
-POST http://{{host}}/driver/command HTTP/1.1
+POST {{host}}/driver/command HTTP/1.1
 content-type: application/json
 
 {

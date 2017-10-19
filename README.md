@@ -1,33 +1,12 @@
-# http-driver-sample
+# Homebase Skill Sample
 
+启动本地服务器：
 
-
-## QuickStart
-
-<!-- add docs here for user -->
-
-see [egg docs][egg] for more detail.
-
-### Development
-
-```bash
-$ npm i
+```shell
+$ yarn
 $ npm run dev
-$ open http://localhost:7001/
 ```
 
-### Deploy
+使用 VSCode 插件 [RestClient](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) 来运行 [/http/rest.http] 中的 API。
 
-```bash
-$ npm start
-$ npm stop
-```
-
-### npm scripts
-
-- Use `npm run lint` to check code style.
-- Use `npm test` to run unit test.
-- Use `npm run autod` to auto detect dependencies upgrade, see [autod](https://www.npmjs.com/package/autod) for more detail.
-
-
-[egg]: https://eggjs.org
+> 已经配置了 RestClient 的 `local` 环境，使用 CommandPalette > Swich Environment 来切换 RestClient 的环境

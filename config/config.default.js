@@ -1,21 +1,37 @@
-'use strict';
+'use strict'
 
 module.exports = appInfo => {
-  const config = exports = {};
+  const config = exports = {}
 
   // use for cookie sign key, should change to your own and keep security
-  config.keys = appInfo.name + '_1508379755713_2546';
+  config.keys = appInfo.name + '_1508379755713_2546'
   config.jsonwebtoken = {
     secret: 'yet_very_random_secret'
-  };
+  }
   config.security = {
     csrf: {
-      ignoreJSON: true,
-    },
-  };
+      ignore: [ '/oauth2' ],
+      ignoreJSON: true
+    }
+  }
+  config.io = {
+    init: {
+      transport: [ 'polling', 'websocket' ]
+    }, // passed to engine.io
+    namespace: {
+      '/': {
+        connectionMiddleware: [],
+        packetMiddleware: []
+      }
+    }
+  }
 
   // add your config here
-  config.middleware = ['responseFormat'];
+  config.middleware = [ 'requestLogger', 'errorHandler', 'responseFormat' ]
 
-  return config;
-};
+  config.responseFormat = {
+    ignore: [ '/oauth2' ]
+  }
+
+  return config
+}

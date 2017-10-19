@@ -1,37 +1,39 @@
-'use strict';
-const joi = require('joi');
-const url = require('url');
-const jwt = require('jsonwebtoken');
+'use strict'
+const joi = require('joi')
+const url = require('url')
+const jwt = require('jsonwebtoken')
+const { Controller } = require('egg')
 
-module.exports = app => {
-  class HomeController extends app.Controller {
-    async index(ctx) {
-      ctx.body = 'hi, egg';
+module.exports = () => {
+  class HomeController extends Controller {
+    async index (ctx) {
+      ctx.redirect('/public/index.html')
     }
 
-    async user(ctx) {
-      ctx.body = ctx.state.user;
+    async user (ctx) {
+      ctx.body = ctx.state.user
     }
 
-    async oauth(ctx) {
-      const { secret } = ctx.app.config.jsonwebtoken;
-      const { callbackURL } = ctx.request.query;
-      let u = await joi.validate(callbackURL, joi.string().uri());
-      u = url.parse(u);
+    async oauth (ctx) {
+      const { config } = ctx.service
+      const { expiresIn, expiredTime } = config
+      const { secret } = ctx.app.config.jsonwebtoken
+      const { callbackURL } = ctx.request.query
+      let u = await joi.validate(callbackURL, joi.string().uri())
+      u = url.parse(u, true)
+      u.search = null
       u.query = Object.assign({}, u.query, {
-        authorization_code: jwt.sign({ username: 'foo' }, secret),
-      });
-      ctx.redirect(url.format(u));
+        userId: 'foo',
+        userToken: jwt.sign({ id: 'foo' }, secret, { expiresIn }),
+        expiresIn,
+        expiredTime
+      })
+      ctx.redirect(url.format(u))
     }
 
-    async callback(ctx) {
-      const { secret } = ctx.app.config.jsonwebtoken;
-      const { authorization_code } = ctx.request.query;
-      const { username } = jwt.verify(authorization_code, secret);
-      ctx.body = {
-        userToken: jwt.sign({ id: username }, secret, { expiresIn: '10d' }),
-      };
+    async callback (ctx) {
+      ctx.body = ctx.request.query
     }
   }
-  return HomeController;
-};
+  return HomeController
+}

@@ -1,12 +1,12 @@
 ### home
-GET http://{{host}}/ HTTP/1.1
+GET {{host}}/ HTTP/1.1
 content-type: application/json
 
 {}
 
 
 ### User
-GET http://{{host}}/user HTTP/1.1
+GET {{host}}/user HTTP/1.1
 content-type: application/json
 
 {
@@ -16,4 +16,4 @@ content-type: application/json
 }
 
 ### OAuth
-GET http://{{host}}/oauth/authorize?callbackURL=http%3A%2F%2F127.0.0.1%3A7001%2Foauth-callback HTTP/1.1
+GET {{host}}/oauth/authorize?callbackURL=https%3A%2F%2Fsample-driver.rokid.com%2Foauth-callback%3FdriverId%3Ddriver-mimic HTTP/1.1
