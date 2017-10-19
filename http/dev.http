@@ -1,0 +1,19 @@
+### home
+GET http://{{host}}/ HTTP/1.1
+content-type: application/json
+
+{}
+
+
+### User
+GET http://{{host}}/user HTTP/1.1
+content-type: application/json
+
+{
+  "userAuth": {
+    "userToken": "{{userToken}}"
+  }
+}
+
+### OAuth
+GET http://{{host}}/oauth/authorize?callbackURL=http%3A%2F%2F127.0.0.1%3A7001%2Foauth-callback HTTP/1.1

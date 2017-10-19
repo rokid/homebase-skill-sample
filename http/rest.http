@@ -1,0 +1,76 @@
+### Get
+POST http://{{host}}/driver/get HTTP/1.1
+content-type: application/json
+
+{
+  "device": {
+    "deviceId": "1",
+    "userAuth": {
+      "userToken": "{{userToken}}"
+    }
+  }
+}
+
+### List
+POST http://{{host}}/driver/list HTTP/1.1
+content-type: application/json
+
+{
+  "userAuth": {
+    "userToken": "{{userToken}}"
+  }
+}
+
+### Execute
+POST http://{{host}}/driver/execute HTTP/1.1
+content-type: application/json
+
+{
+  "device": {
+    "deviceId": "1",
+    "userAuth": {
+      "userToken": "{{userToken}}"
+    }
+  },
+  "action": {
+    "property": "switch",
+    "name": "on"
+  }
+}
+
+
+### Command OAuth
+POST http://{{host}}/driver/command HTTP/1.1
+content-type: application/json
+
+{
+  "command": "OAuth",
+  "params": {
+    "callbackURL": "http://{{host}}/oauth-callback"
+  }
+}
+
+### Command OAuthRefresh
+POST http://{{host}}/driver/command HTTP/1.1
+content-type: application/json
+
+{
+  "command": "OAuthRefresh",
+  "params": {
+    "userId": "{{username}}",
+    "userToken": "{{userToken}}"
+  }
+}
+
+
+### Command Login
+POST http://{{host}}/driver/command HTTP/1.1
+content-type: application/json
+
+{
+  "command": "Login",
+  "params": {
+    "username": "{{username}}",
+    "password": "{{password}}"
+  }
+}
